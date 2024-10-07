@@ -4,14 +4,14 @@ const movieModel = require("../model/movie");
 const { createData, readData, readOneData, updateData, deleteData } = require("../controller/movie");
 const authSession = require("../middleware/auth")
 
-route.post("/create", createData);
+route.post("/create",authSession, createData);
 
 route.get("/read", authSession, readData);
 
-route.get("/readOne/:id", readOneData);
+route.get("/readOne/:id",authSession, readOneData);
 
-route.put("/update/:id", updateData);
+route.put("/update/:id",authSession, updateData);
 
-route.delete("/delete/:id", deleteData)
+route.delete("/delete/:id",authSession, deleteData)
 
 module.exports = route;

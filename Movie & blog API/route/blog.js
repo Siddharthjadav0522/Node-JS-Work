@@ -7,9 +7,9 @@ const { readOneData } = require("../controller/movie");
 
 
 route.post("/create", authSession, upload.single("photo"), createBlog);
-route.get("/getalldata", getBlog);
-route.get("/getone/:id", readOneBlog);
+route.get("/getalldata",authSession, getBlog);
+route.get("/getone/:id",authSession, readOneBlog);
 // route.put("/update/:id", updateBlog);
-route.delete("/delete/:id", deleteBlog)
+route.delete("/delete/:id",authSession, deleteBlog)
 
 module.exports = route;
