@@ -17,9 +17,14 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     let { username, email, password } = req.body;
     let findUser = await User.findOne({ email });
+    let id = findUser._id;
+
 
     if (findUser && findUser.username === username) {
         if (findUser.password === password) {
+            req.session.user = {
+                id
+            }
             res.status(200).json({
                 msg: "User Login Successfully"
             })
@@ -36,6 +41,9 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
+    req.session.destroy(function (err) {
+        console.log("session destroy");
+    })
     res.json({
         msg: "user logout Successfully"
     })
