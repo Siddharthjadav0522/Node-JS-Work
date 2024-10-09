@@ -1,4 +1,6 @@
 const blogModel = require("../model/blog");
+const fs = require("fs");
+const path = require("path");
 
 const createBlog = async (req, res) => {
     try {
@@ -60,6 +62,10 @@ const deleteBlog = async (req, res) => {
         if (!blog) {
             return res.status(400).send("Blog not found");
         }
+        const img = blog.image;
+        const image_path = path.join(__dirname, `.././public/images/${img}`);
+
+        fs.unlinkSync(image_path);
         let deleteBlog = await blogModel.findByIdAndDelete(id);
         console.log(deleteBlog);
         res.send("Blog deleted");
