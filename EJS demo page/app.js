@@ -9,7 +9,7 @@ app.use(express.static(path.join(__dirname,"public")));
 app.get("/",(req,res)=>{
     res.render("index");
 })
-app.get("/about",(req,res)=>{
+app.get("/about",(req,res)=>{ 
     res.render("about");
 })
 app.get("/contact",(req,res)=>{
