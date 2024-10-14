@@ -1,4 +1,7 @@
+const sendOtp = require("../config/email_config");
 const User = require("../model/user");
+
+const otpStore = {};
 
 const register = async (req, res) => {
     let { username, email, password } = req.body;
@@ -49,4 +52,24 @@ const logout = (req, res) => {
     })
 };
 
-module.exports = { register, login, logout };
+const otpVerifyEmail = async (req, res) => {
+    let { email } = req.body;
+    let to = email;
+    let subject = "OTP from siddharth jadav";
+    let otp = Math.floor(Math.random() * 10000 + 1);
+
+    otpStore.email = {
+        opt: otp,
+        time: Date.now()
+    }
+    console.log(otpStore);
+
+    let html = `<p>This is your otp , it will expire in 2 minites</P>
+    <h1>OTP : ${otp}</h1>
+    <p>Thank you and best regards</p>
+    `
+    sendOtp(to, subject, html);
+    res.send("email send")
+}
+
+module.exports = { register, login, logout, otpVerifyEmail };
