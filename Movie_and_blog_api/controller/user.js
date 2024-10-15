@@ -4,7 +4,18 @@ const User = require("../model/user");
 const otpStore = {};
 
 const register = async (req, res) => {
-    let { username, email, password } = req.body;
+    let { username, email, password, otp } = req.body;
+    // console.log(otp);
+    // console.log(otpStore.email.otp , "--" ,Date.now() - otpStore.email.time);
+
+    if (!otpStore.email) {
+        return res.status(400).json({ msg: "OTP not sent or expired" });
+    }
+    if (otpStore.email.otp !== otp && (Date.now() - otpStore.email.time >= 120000)) {
+        return res.status(400).send("email verification fail");
+    };
+    delete otpStore.email;
+    console.log(otpStore);
     let findUser = await User.findOne({ email });
     if (findUser) {
         res.status(409).json({
@@ -56,10 +67,10 @@ const otpVerifyEmail = async (req, res) => {
     let { email } = req.body;
     let to = email;
     let subject = "OTP from siddharth jadav";
-    let otp = Math.floor(Math.random() * 10000 + 1);
+    let otp = Math.floor(1000 + Math.random() * 9000);
 
     otpStore.email = {
-        opt: otp,
+        otp: otp,
         time: Date.now()
     }
     console.log(otpStore);
@@ -69,7 +80,7 @@ const otpVerifyEmail = async (req, res) => {
     <p>Thank you and best regards</p>
     `
     sendOtp(to, subject, html);
-    res.send("email send")
+    res.send(`email send = ${otpStore.email.otp}`)
 }
 
 module.exports = { register, login, logout, otpVerifyEmail };
