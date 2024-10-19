@@ -1,7 +1,7 @@
 const express = require("express");
 const route = express.Router();
 const { createBlog, getBlog, readOneBlog, deleteBlog, updateBlog } = require("../controller/blog");
-const authSession = require("../middleware/auth");
+const {authSession} = require("../middleware/auth");
 const upload = require("../middleware/uploadImg");
 
 

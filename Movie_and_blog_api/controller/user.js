@@ -1,6 +1,8 @@
 const sendOtp = require("../config/email_config");
 const User = require("../model/user");
 const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
+// const env = require("dotenv")
 
 const otpStore = {};
 
@@ -17,6 +19,7 @@ const register = async (req, res) => {
     delete otpStore.email;
 
     let findUser = await User.findOne({ email });
+
     if (findUser) {
         return res.status(409).json({
             msg: "user alredy exist"
@@ -25,7 +28,6 @@ const register = async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-
         let user = await User.create({
             username,
             email,
@@ -41,18 +43,24 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     let { username, email, password } = req.body;
+    
     let findUser = await User.findOne({ email });
     if (!findUser) {
         return res.send("envalid user email")
     }
-    let id = findUser._id;
     if (findUser && findUser.username === username) {
         if (bcrypt.compareSync(password, findUser.password)) {
-            req.session.user = {
-                id
+            const userData = {
+                id: findUser._id,
+                username: findUser.username,
+                email: findUser.email,
+                password: findUser.password,
             }
+            const token = jwt.sign(userData, process.env.JWTSECRET_KEY ,{expiresIn:"1h"});
+
             res.status(200).json({
-                msg: "User Login Successfully"
+                msg: "User Login Successfully",
+                token: token, 
             })
         } else {
             res.json({

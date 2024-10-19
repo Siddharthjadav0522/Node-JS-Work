@@ -2,11 +2,13 @@ const express = require("express");
 const route = express.Router();
 const User = require("../model/user");
 const { register, login, logout, otpVerifyEmail } = require("../controller/user")
+const {tokenAuth} = require("../middleware/auth");
 
 route.post("/register", register);
 route.post("/register/otp", otpVerifyEmail);
 
-route.post("/login", login);
+// route.post("/login", tokenAuth , login);
+route.post("/login" , login);
 
 route.get("/logout", logout);
 
